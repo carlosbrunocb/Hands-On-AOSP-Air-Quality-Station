@@ -41,7 +41,7 @@ O objetivo é que os dados dos sensores sejam reconhecidos nativamente pelo sist
 Para compilar e testar o AOSP, é recomendável ter:
 - CPU: 8 núcleos (16 recomendados)
 - RAM: 16 GB (32 GB recomendados)
-- Espaço em disco: 250 GB (500 GB recomendados)
+- Espaço em disco: 350 GB (500 GB recomendados)
 - Conexão de internet de alta velocidade
 
 ---
