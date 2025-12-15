@@ -18,6 +18,30 @@ O objetivo é que os dados dos sensores sejam reconhecidos nativamente pelo sist
 
 ## Colaboradores
 <img height="256" alt="image" src="https://github.com/user-attachments/assets/79be56ad-49e6-4207-930e-3c3fdd5704a1" />
+<img height="256" alt="image" src="https://github.com/user-attachments/assets/efb3c50c-4d58-49cc-b6cd-6cd740bac383" />
+
+## Rercusos
+- Computador com os requisitos descritos na seção de [Configuração de Hardware](#configuracao-de-hardware).
+- AOSP na versão 14.0.0_r27 ou superior.
+- Placa ESP32-WROOM com protoboard
+- Sensor de partículas (SDS011) e sensor de gases (MQ2)
+
+## Requisitos
+- Sistema operacional: Linux (preferencialmente Ubuntu)
+- Repo
+- Git
+- Ambiente de desenvolvimento configurado para AOSP
+- IDE Arduino
+- Editor VSCode (ou outro)
+- Smartphone Motorola G100 ou superior
+
+## Configuração de Hardware
+Para compilar e testar o AOSP, é recomendável ter:
+- CPU: 8 núcleos (16 recomendados)
+- RAM: 16 GB (32 GB recomendados)
+- Espaço em disco: 250 GB (500 GB recomendados)
+- Conexão de internet de alta velocidade
+
 
 
 
