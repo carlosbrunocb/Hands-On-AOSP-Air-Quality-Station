@@ -20,6 +20,7 @@ O objetivo é que os dados dos sensores sejam reconhecidos nativamente pelo sist
 <img height="256" alt="image" src="https://github.com/user-attachments/assets/79be56ad-49e6-4207-930e-3c3fdd5704a1" />
 <img height="256" alt="image" src="https://github.com/user-attachments/assets/efb3c50c-4d58-49cc-b6cd-6cd740bac383" />
 <img height="256" alt="image" src="https://github.com/user-attachments/assets/348b7659-b93e-44d7-93b9-fd7bd62048d1" />
+<img height="256" alt="image" src="https://github.com/user-attachments/assets/f79040b6-8458-4164-ad29-27f1e0e9abd6" />
 
 
 ## Rercusos
