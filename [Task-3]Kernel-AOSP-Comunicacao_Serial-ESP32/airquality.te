@@ -1,0 +1,12 @@
+# Permitir que a HAL de sensores acesse dispositivos USB Serial genéricos
+# O Android rotula /dev/ttyUSB* como 'usb_serial_device' automaticamente.
+
+allow hal_sensors_default usb_serial_device:chr_file rw_file_perms;
+
+# Permissões adicionais de configuração (ioctl) que bibliotecas seriais costumam usar
+allow hal_sensors_default usb_serial_device:chr_file { ioctl };
+
+# Se sua HAL precisar procurar o arquivo na pasta /dev (getattr no diretório)
+allow hal_sensors_default device:dir r_dir_perms;
+
+
