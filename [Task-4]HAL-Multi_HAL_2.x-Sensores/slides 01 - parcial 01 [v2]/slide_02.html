@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Visão Geral do Projeto</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap"
+        rel="stylesheet" />
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #0f172a;
+            color: white;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Impede barras de rolagem na janela principal */
+        }
+
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .slide-container {
+            /* Alterado de fixo (1280x720) para ocupar a tela toda */
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* No gradients allowed */
+        .glass-panel {
+            background-color: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(148, 163, 184, 0.1);
+        }
+
+        /* Ajuste fino para garantir que o conteúdo não estoure em telas muito baixas */
+        .content-wrapper {
+            overflow-y: auto; 
+            /* Esconde a scrollbar visualmente mas permite scroll se necessário em telas pequenas */
+            scrollbar-width: none; 
+            -ms-overflow-style: none;
+        }
+        .content-wrapper::-webkit-scrollbar { 
+            display: none; 
+        }
+    </style>
+</head>
+
+<body>
+    <div id="slide-container" class="slide-container bg-gray-900 text-white relative">
+        
+        <div class="pt-8 md:pt-10 px-8 md:px-16 flex items-end justify-between border-b border-gray-800 pb-6 mb-4 md:mb-8 bg-gray-900 z-10 shrink-0">
+            <div>
+                <div class="flex items-center space-x-3 mb-2">
+                    <span
+                        class="px-2 py-1 bg-blue-900 text-blue-200 text-xs font-mono rounded font-bold uppercase tracking-wider">Overview</span>
+                    <span class="text-gray-500 text-sm font-mono tracking-widest">PROJETO ESTAÇÃO AR</span>
+                </div>
+                <h1 class="text-3xl md:text-5xl font-bold text-white tracking-tight">Visão Geral do Projeto</h1>
+            </div>
+            <div class="text-right">
+                <i class="fas fa-project-diagram text-gray-700 text-3xl md:text-5xl"></i>
+            </div>
+        </div>
+
+        <div class="content-wrapper flex-1 px-8 md:px-16 pb-8 md:pb-12 flex flex-col md:flex-row space-y-6 md:space-y-0 md:space-x-8">
+            
+            <div class="flex-1 flex flex-col space-y-6">
+                <div
+                    class="glass-panel p-6 md:p-8 rounded-xl shadow-lg border-l-4 border-green-500 flex-1 flex flex-col justify-center">
+                    <div class="flex items-center space-x-4 mb-4">
+                        <div class="w-10 h-10 md:w-12 md:h-12 bg-green-900 bg-opacity-50 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-bullseye text-xl md:text-2xl text-green-400"></i>
+                        </div>
+                        <h2 class="text-xl md:text-2xl font-bold text-gray-100">Objetivo Principal</h2>
+                    </div>
+                    <p class="text-gray-300 text-base md:text-lg leading-relaxed">
+                        Integrar sensores ambientais externos como recursos <span class="text-white font-bold">nativos
+                            do sistema Android</span>.
+                        Permitir que apps acessem dados de qualidade do ar através da API padrão <code
+                            class="font-mono text-sm bg-gray-800 px-2 py-1 rounded text-orange-400">SensorManager</code>.
+                    </p>
+                </div>
+                <div
+                    class="glass-panel p-6 md:p-8 rounded-xl shadow-lg border-l-4 border-blue-500 flex-1 flex flex-col justify-center">
+                    <div class="flex items-center space-x-4 mb-4">
+                        <div class="w-10 h-10 md:w-12 md:h-12 bg-blue-900 bg-opacity-50 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-network-wired text-xl md:text-2xl text-blue-400"></i>
+                        </div>
+                        <h2 class="text-xl md:text-2xl font-bold text-gray-100">Integração &amp; Conexão</h2>
+                    </div>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-blue-500 mt-1 mr-3"></i>
+                            <p class="text-gray-300 text-sm md:text-base"><span class="text-blue-300 font-semibold">Atual:</span> Comunicação
+                                USB Serial (OTG) com protocolo JSON.</p>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-arrow-circle-right text-gray-600 mt-1 mr-3"></i>
+                            <p class="text-gray-500 text-sm md:text-base"><span class="font-semibold">Futuro:</span> Planejamento para canal
+                                Wi-Fi (TCP Sockets).</p>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-cube text-purple-400 mt-1 mr-3"></i>
+                            <p class="text-gray-300 text-sm md:text-base">Exposição via <span
+                                    class="font-mono text-purple-300">SensorService</span> para todo o sistema.</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="w-full md:w-5/12 flex flex-col space-y-6">
+                <div class="glass-panel p-6 rounded-xl border border-gray-700 bg-gray-800 bg-opacity-50 h-full flex flex-col">
+                    <h3 class="text-lg font-bold text-gray-200 mb-4 border-b border-gray-700 pb-2 flex items-center shrink-0">
+                        <i class="fas fa-microchip text-orange-400 mr-2"></i> Hardware (ESP32 Station)
+                    </h3>
+                    <div class="grid grid-cols-1 gap-4 flex-1">
+                        <div class="flex items-center bg-gray-900 p-3 rounded-lg border border-gray-700">
+                            <div
+                                class="w-10 h-10 bg-gray-800 rounded flex items-center justify-center text-red-400 font-bold mr-3">
+                                PM</div>
+                            <div>
+                                <p class="text-sm font-bold text-white">SDS011</p>
+                                <p class="text-xs text-gray-400">Partículas Suspensas (PM2.5 / PM10)</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center bg-gray-900 p-3 rounded-lg border border-gray-700">
+                            <div
+                                class="w-10 h-10 bg-gray-800 rounded flex items-center justify-center text-yellow-400 font-bold mr-3">
+                                <i class="fas fa-fire"></i></div>
+                            <div>
+                                <p class="text-sm font-bold text-white">MQ2</p>
+                                <p class="text-xs text-gray-400">Gás Inflamável / Fumaça / GLP</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center bg-gray-900 p-3 rounded-lg border border-gray-700">
+                            <div
+                                class="w-10 h-10 bg-gray-800 rounded flex items-center justify-center text-gray-400 font-bold mr-3">
+                                CO</div>
+                            <div>
+                                <p class="text-sm font-bold text-white">MQ7</p>
+                                <p class="text-xs text-gray-400">Monóxido de Carbono</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center bg-gray-900 p-3 rounded-lg border border-gray-700">
+                            <div
+                                class="w-10 h-10 bg-gray-800 rounded flex items-center justify-center text-blue-400 font-bold mr-3">
+                                <i class="fas fa-temperature-high"></i></div>
+                            <div>
+                                <p class="text-sm font-bold text-white">DHT11</p>
+                                <p class="text-xs text-gray-400">Temperatura &amp; Umidade</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-auto bg-blue-900 bg-opacity-20 p-4 rounded-xl border border-blue-800 flex items-center shrink-0">
+                    <i class="fab fa-android text-3xl md:text-4xl text-green-500 mr-4"></i>
+                    <div>
+                        <p class="text-sm text-blue-200 font-bold">LineageOS 21 Integration</p>
+                        <p class="text-xs text-gray-400 mt-1">Compatível com Android 14 Multi-HAL Architecture</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div
+            class="absolute bottom-0 right-0 w-64 h-64 bg-blue-600 rounded-full filter blur-3xl opacity-5 pointer-events-none">
+        </div>
+        <div
+            class="absolute top-20 left-20 w-32 h-32 bg-green-500 rounded-full filter blur-3xl opacity-5 pointer-events-none">
+        </div>
+
+        <button onclick="toggleFullScreen()" 
+                class="absolute bottom-6 right-6 p-3 bg-gray-700 hover:bg-gray-600 text-white rounded-full shadow-lg border border-gray-500 transition-colors z-50 opacity-50 hover:opacity-100"
+                title="Tela Cheia">
+            <i class="fas fa-expand"></i>
+        </button>
+    </div>
+
+    <script>
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.error(`Erro ao tentar ativar tela cheia: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

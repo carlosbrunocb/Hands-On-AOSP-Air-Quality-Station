@@ -1,12 +1,14 @@
-# Permitir que a HAL de sensores acesse dispositivos USB Serial genéricos
-# O Android rotula /dev/ttyUSB* como 'usb_serial_device' automaticamente.
+# --- Política SELinux para AirQuality HAL ---
 
-allow hal_sensors_default usb_serial_device:chr_file rw_file_perms;
-
-# Permissões adicionais de configuração (ioctl) que bibliotecas seriais costumam usar
-allow hal_sensors_default usb_serial_device:chr_file { ioctl };
-
-# Se sua HAL precisar procurar o arquivo na pasta /dev (getattr no diretório)
+# Permitir buscar o arquivo no diretório /dev
 allow hal_sensors_default device:dir r_dir_perms;
+
+# Permissão Completa:
+# - open/read/write: Leitura e escrita básica
+# - ioctl: Configuração de BaudRate (essencial para corrigir o buffer overflow)
+# - getattr: Verificar se o arquivo existe
+# - lock: Bloqueio exclusivo da porta
+# - append: Adicionar dados (raro em serial, mas parte do set padrão)
+allow hal_sensors_default usb_serial_device:chr_file { open read write ioctl getattr lock append map };
 
 

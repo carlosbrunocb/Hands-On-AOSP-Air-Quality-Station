@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Apresentação - Estação de Qualidade do Ar</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: #0d1117;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Layout principal */
+        .layout {
+            display: grid;
+            grid-template-rows: 1fr 64px;
+            height: 100vh;
+        }
+
+        /* Área do slide */
+        .slide-area {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0d1117;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Barra inferior */
+        .control-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            background: #161b22;
+            border-top: 1px solid #30363d;
+        }
+
+        /* Contador */
+        .counter {
+            color: #8b949e;
+            font-size: 14px;
+        }
+
+        /* Botões */
+        .controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .controls button {
+            background: #0d1117;
+            color: #3DDC84;
+            border: 1px solid #3DDC84;
+            padding: 8px 14px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .controls button:hover {
+            background: #3DDC84;
+            color: #000;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="layout">
+
+        <!-- Área do slide -->
+        <div class="slide-area">
+            <iframe id="slideFrame"></iframe>
+        </div>
+
+        <!-- Barra de controles -->
+        <div class="control-bar">
+            <div class="counter" id="counter"></div>
+
+            <div class="controls">
+                <button onclick="prevSlide()">⟵</button>
+                <button onclick="nextSlide()">⟶</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const slides = [
+            'slide_01.html',
+            'slide_02.html',
+            'slide_03.html',
+            'slide_04.html',
+            'slide_05.html',
+            'slide_06.html',
+            'slide_07.html',
+            'slide_08.html',
+            'slide_09.html',
+            'slide_10.html',
+            'slide_11.html',
+            'slide_12.html',
+            'slide_13.html',
+            'slide_14.html',
+            'slide_15.html'
+        ];
+
+        let current = 0;
+        const frame = document.getElementById('slideFrame');
+        const counter = document.getElementById('counter');
+
+        function loadSlide() {
+            frame.src = slides[current];
+            counter.textContent = `Slide ${current + 1} / ${slides.length}`;
+        }
+
+        function nextSlide() {
+            if (current < slides.length - 1) {
+                current++;
+                loadSlide();
+            }
+        }
+
+        function prevSlide() {
+            if (current > 0) {
+                current--;
+                loadSlide();
+            }
+        }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        loadSlide();
+    </script>
+
+</body>
+
+
+</html>

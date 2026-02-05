@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Troubleshooting - Desafios e Soluções</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+    <style>
+        /* Reset e Base */
+        body { 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Roboto', sans-serif; 
+            background-color: #000000; 
+            color: white; 
+            overflow: hidden; /* Evita barras de rolagem */
+        }
+
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* Container Principal - Ocupa toda a tela */
+        .slide-container { 
+            width: 100vw; 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            background-color: #0f172a; /* Slate 900 */
+            position: relative;
+        }
+
+        /* --- Estilo dos Cards --- */
+        .card-base {
+            padding: 20px;
+            border-radius: 12px;
+            height: 100%; /* Garante altura igual */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+
+        /* Card de Problema (Esquerda) */
+        .problem-card {
+            background-color: rgba(239, 68, 68, 0.1); /* Red tint */
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            border-left: 5px solid #ef4444;
+        }
+
+        /* Card de Solução (Direita) */
+        .solution-card {
+            background-color: rgba(34, 197, 94, 0.1); /* Green tint */
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            border-left: 5px solid #22c55e;
+        }
+
+        /* Snippets de Código */
+        .code-snippet {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: #020617; /* Slate 950 */
+            padding: 10px 15px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: #e2e8f0;
+            margin-top: 12px;
+            border: 1px solid #334155;
+            white-space: pre-wrap; /* Quebra linha se necessário */
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* Container da Seta (Coluna do Meio) */
+        .arrow-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-size: 1.8rem;
+        }
+
+        /* Botão de Tela Cheia */
+        .fullscreen-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 50;
+            transition: background 0.3s;
+        }
+        .fullscreen-btn:hover { background: rgba(255,255,255,0.2); }
+
+        /* Icones */
+        .problem-icon { color: #f87171; margin-right: 10px; font-size: 1.4rem; }
+        .solution-icon { color: #4ade80; margin-right: 10px; font-size: 1.4rem; }
+
+        /* Layout Grid Robusto */
+        .content-grid {
+            display: grid;
+            /* 1 fração (Esquerda) | Auto (Seta) | 1 fração (Direita) */
+            grid-template-columns: 1fr 60px 1fr; 
+            gap: 20px;
+            align-items: stretch; /* Estica a altura */
+            margin-bottom: 24px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="slide-container" id="slideContainer">
+        
+        <div class="pt-8 px-12 flex items-center justify-between z-10 mb-4 shrink-0">
+            <div>
+                <div class="flex items-center space-x-3 mb-1">
+                    <span class="px-2 py-0.5 bg-red-900/50 border border-red-500/30 text-red-200 text-xs font-mono rounded font-bold uppercase tracking-wider">Troubleshooting</span>
+                    <span class="text-gray-500 text-sm font-mono tracking-widest">DESAFIOS & SOLUÇÕES</span>
+                </div>
+                <h1 class="text-4xl font-bold text-white tracking-tight">Dificuldades e Soluções (Parte 1)</h1>
+            </div>
+            <div class="flex items-center space-x-3 bg-slate-800 p-2 rounded-lg border border-slate-700">
+                <i class="fas fa-bug text-red-400 text-2xl"></i>
+                <div class="h-6 w-px bg-gray-600"></div>
+                <i class="fas fa-check-circle text-green-400 text-2xl"></i>
+            </div>
+        </div>
+
+        <div class="flex-1 px-12 pb-8 flex flex-col justify-center overflow-y-auto z-10">
+            
+            <div class="content-grid">
+                <div class="card-base problem-card">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-link problem-icon"></i>
+                        <h3 class="text-xl font-bold text-red-100">Erro de Dependência (Soong)</h3>
+                    </div>
+                    <p class="text-sm text-gray-300">Build falhava por módulos jsoncpp ausentes.</p>
+                    <div class="code-snippet text-red-300">"sensors.airquality" depends on undefined module "libjsoncpp_static"</div>
+                </div>
+
+                <div class="arrow-container">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+
+                <div class="card-base solution-card">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-tools solution-icon"></i>
+                        <h3 class="text-xl font-bold text-green-100">Ajuste no Android.bp</h3>
+                    </div>
+                    <p class="text-sm text-gray-300">Configuração das shared_libs e headers.</p>
+                    <div class="code-snippet text-green-300">shared_libs: ["libjsoncpp"],
+header_libs: ["libjsoncpp_headers"]</div>
+                </div>
+            </div>
+
+            <div class="content-grid">
+                <div class="card-base problem-card">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-file-code problem-icon"></i>
+                        <h3 class="text-xl font-bold text-red-100">Include Não Encontrado</h3>
+                    </div>
+                    <p class="text-sm text-gray-300">Header base 'V2_0/SubHal.h' invisível.</p>
+                    <div class="code-snippet text-red-300">fatal error: 'V2_0/SubHal.h' file not found</div>
+                </div>
+
+                <div class="arrow-container">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+
+                <div class="card-base solution-card">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-folder-open solution-icon"></i>
+                        <h3 class="text-xl font-bold text-green-100">Header Lib Específico</h3>
+                    </div>
+                    <p class="text-sm text-gray-300">Inclusão da lib correta da interface Multi-HAL.</p>
+                    <div class="code-snippet text-green-300">header_libs: [
+    "android.hardware.sensors@2.X-multihal.header"
+]</div>
+                </div>
+            </div>
+
+            <div class="content-grid" style="margin-bottom: 0;">
+                <div class="card-base problem-card">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-tag problem-icon"></i>
+                        <h3 class="text-xl font-bold text-red-100">Versão Rejeitada</h3>
+                    </div>
+                    <p class="text-sm text-gray-300">Framework rejeitava a HAL por versão incorreta.</p>
+                    <div class="code-snippet text-red-300">SubHal version was not 2.0</div>
+                </div>
+
+                <div class="arrow-container">
+                    <i class="fas fa-arrow-right"></i>
+                </div>
+
+                <div class="card-base solution-card">
+                    <div class="flex items-center mb-2">
+                        <i class="fas fa-check-double solution-icon"></i>
+                        <h3 class="text-xl font-bold text-green-100">Definição Hexadecimal</h3>
+                    </div>
+                    <p class="text-sm text-gray-300">Uso da constante exata exigida pelo HalProxy.</p>
+                    <div class="code-snippet text-green-300">*version = SUB_HAL_2_0_VERSION; // 0x02000000</div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="absolute top-20 right-0 w-96 h-96 bg-red-900 rounded-bl-full opacity-10 pointer-events-none filter blur-3xl"></div>
+        <div class="absolute bottom-0 left-0 w-64 h-64 bg-green-900 rounded-tr-full opacity-10 pointer-events-none filter blur-3xl"></div>
+        
+        <button onclick="toggleFullScreen()" class="fullscreen-btn" title="Tela Cheia">
+            <i class="fas fa-expand"></i>
+        </button>
+
+    </div>
+
+    <script>
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    alert(`Erro ao tentar ativar tela cheia: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+    </script>
+</body>
+</html>

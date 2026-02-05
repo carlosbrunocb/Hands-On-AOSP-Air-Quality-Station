@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Arquitetura HAL - Fullscreen</title>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+    /* Reset & Base */
+    body { margin: 0; padding: 0; font-family: 'Roboto', sans-serif; background-color: #0f172a; color: white; overflow: hidden; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+    
+    /* Fullscreen Container Adjustment */
+    .slide-container { 
+        width: 100vw; 
+        height: 100vh; 
+        display: flex; 
+        flex-direction: column; 
+        overflow: hidden; 
+        position: relative; 
+    }
+    
+    /* Architecture Box Styles */
+    .arch-box {
+        background-color: rgba(30, 41, 59, 0.6);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(148, 163, 184, 0.2);
+        border-radius: 12px;
+        padding: 20px; /* Aumentado levemente para telas grandes */
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s;
+        height: 100%;
+    }
+
+    .arch-box:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .box-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 16px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 8px;
+    }
+
+    .box-title {
+        font-family: 'JetBrains Mono', monospace;
+        font-weight: 700;
+        font-size: 1rem;
+    }
+
+    .box-icon {
+        margin-right: 10px;
+        font-size: 1.2rem;
+    }
+
+    .box-content {
+        font-size: 0.85rem; /* Fonte levemente maior para leitura em fullscreen */
+        color: #cbd5e1;
+        line-height: 1.6;
+        flex-grow: 1; /* Garante que o conteudo ocupe espaço */
+    }
+
+    .method-tag {
+        background-color: rgba(0, 0, 0, 0.3);
+        border-radius: 4px;
+        padding: 3px 8px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.75rem;
+        margin-bottom: 4px;
+        display: inline-block;
+        margin-right: 4px;
+    }
+
+    /* Specific Colors */
+    .box-serial { border-top: 4px solid #f97316; }
+    .box-serial .box-icon { color: #f97316; }
+    
+    .box-parser { border-top: 4px solid #3b82f6; }
+    .box-parser .box-icon { color: #3b82f6; }
+    
+    .box-subhal { border-top: 4px solid #a855f7; }
+    .box-subhal .box-icon { color: #a855f7; }
+    
+    .box-sensor { border-top: 4px solid #10b981; }
+    .box-sensor .box-icon { color: #10b981; }
+
+    /* Connections */
+    .arrow-right {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #64748b;
+        font-size: 1.5rem;
+        padding: 0 10px;
+    }
+    
+    .arrow-line {
+        height: 2px;
+        background-color: #475569;
+        flex-grow: 1;
+        position: relative;
+    }
+
+    .data-pill {
+        background-color: #1e293b;
+        border: 1px solid #475569;
+        border-radius: 12px;
+        padding: 4px 12px;
+        font-size: 0.7rem;
+        color: #94a3b8;
+        position: absolute;
+        top: -24px;
+        left: 50%;
+        transform: translateX(-50%);
+        white-space: nowrap;
+        font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Background Grid */
+    .bg-grid {
+        background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+        background-size: 40px 40px;
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        z-index: 0;
+    }
+</style>
+</head>
+<body>
+<div class="slide-container bg-gray-900 text-white relative">
+    
+    <div class="bg-grid"></div>
+    
+    <div class="pt-8 px-12 flex items-center justify-between z-10 mb-4">
+        <div>
+            <div class="flex items-center space-x-3 mb-2">
+                <span class="px-2 py-0.5 bg-gray-700 text-gray-200 text-xs font-mono rounded font-bold uppercase tracking-wider">Software Design</span>
+                <span class="text-gray-500 text-sm font-mono tracking-widest">ARQUITETURA HAL</span>
+            </div>
+            <h1 class="text-4xl font-bold text-white tracking-tight">Arquitetura Detalhada</h1>
+        </div>
+        <div class="flex items-center space-x-2">
+            <i class="fas fa-project-diagram text-gray-600 text-3xl"></i>
+            <div class="h-8 w-px bg-gray-700 mx-2"></div>
+            <i class="fas fa-cogs text-gray-600 text-3xl"></i>
+        </div>
+    </div>
+
+    <div class="flex-1 px-12 pb-8 flex flex-col justify-center z-10 h-full">
+        
+        <div class="flex justify-between items-end mb-8 px-12">
+            <div class="flex flex-col items-center">
+                <div class="bg-gray-800 border border-gray-600 rounded px-4 py-2 mb-2 text-gray-400 font-mono text-xs shadow-lg">
+                    <i class="fab fa-linux mr-2"></i>Kernel / Device
+                </div>
+                <div class="h-12 w-0.5 bg-gray-600 border-l border-dashed border-gray-500"></div>
+                <i class="fas fa-chevron-down text-gray-600 -mt-1"></i>
+            </div>
+            <div class="flex flex-col items-center">
+                <div class="bg-blue-900/40 border border-blue-500/50 rounded px-4 py-2 mb-2 text-blue-200 font-bold font-mono text-xs shadow-lg shadow-blue-900/20">
+                    <i class="fab fa-android mr-2"></i>Android SensorService
+                </div>
+                <div class="h-12 w-0.5 bg-blue-500/50"></div>
+                <i class="fas fa-chevron-down text-blue-500/50 -mt-1"></i>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-12 gap-4 items-stretch flex-grow max-h-[50vh]">
+            
+            <div class="col-span-3 arch-box box-serial">
+                <div class="box-header">
+                    <i class="fas fa-microchip box-icon"></i>
+                    <span class="box-title">SerialReader</span>
+                </div>
+                <div class="box-content flex flex-col justify-between">
+                    <div>
+                        <p class="mb-3">Gerencia a comunicação I/O com o hardware ESP32.</p>
+                        <ul class="list-disc pl-4 space-y-1">
+                            <li>Thread Assíncrona</li>
+                            <li>Auto Reconnect</li>
+                            <li>Raw Read Loop</li>
+                        </ul>
+                    </div>
+                    <div class="mt-4 border-t border-gray-600/30 pt-3">
+                        <span class="method-tag text-orange-200">start()</span>
+                        <span class="method-tag text-orange-200">workerThread()</span>
+                        <span class="method-tag text-orange-200">setPolling(bool)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-span-1 arrow-right relative">
+                <div class="arrow-line"></div>
+                <i class="fas fa-chevron-right text-gray-500 ml-1"></i>
+                <div class="data-pill">JSON String</div>
+            </div>
+
+            <div class="col-span-2 arch-box box-parser">
+                <div class="box-header">
+                    <i class="fas fa-file-code box-icon"></i>
+                    <span class="box-title">JsonParser</span>
+                </div>
+                <div class="box-content flex flex-col justify-between">
+                    <div>
+                        <p class="mb-3">Transforma dados brutos em estruturas tipadas.</p>
+                        <ul class="list-disc pl-4 space-y-1">
+                            <li>Lib: jsoncpp</li>
+                            <li>Validação</li>
+                            <li>Timestamping</li>
+                        </ul>
+                    </div>
+                    <div class="mt-4 border-t border-gray-600/30 pt-3">
+                        <span class="method-tag text-blue-200">parse(string)</span>
+                        <span class="method-tag text-blue-200">AirData{}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-span-1 arrow-right relative">
+                <div class="arrow-line"></div>
+                <i class="fas fa-chevron-right text-gray-500 ml-1"></i>
+                <div class="data-pill">AirData Struct</div>
+            </div>
+
+            <div class="col-span-3 arch-box box-subhal">
+                <div class="box-header">
+                    <i class="fas fa-sitemap box-icon"></i>
+                    <span class="box-title">AirQualitySubHal</span>
+                </div>
+                <div class="box-content flex flex-col justify-between">
+                    <div>
+                        <p class="mb-3">Controlador central e ponto de integração.</p>
+                        <ul class="list-disc pl-4 space-y-1">
+                            <li>Gerencia Sensores</li>
+                            <li>Implementa Callback</li>
+                            <li>Roteia Eventos</li>
+                        </ul>
+                    </div>
+                    <div class="mt-4 border-t border-gray-600/30 pt-3">
+                        <span class="method-tag text-purple-200">activate()</span>
+                        <span class="method-tag text-purple-200">onDataReceived()</span>
+                        <span class="method-tag text-purple-200">batch()</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-span-2 relative flex flex-col justify-center pl-2">
+                <div class="flex items-center mb-4">
+                    <div class="w-4 h-0.5 bg-gray-600"></div>
+                    <div class="arch-box box-sensor w-full p-3 flex-row items-center h-auto">
+                        <i class="fas fa-wind box-icon text-sm mr-2"></i>
+                        <div>
+                            <p class="font-mono font-bold text-xs">AirQualitySensor</p>
+                            <p class="text-[0.65rem] text-gray-400">Map(AirData -> Event)</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <div class="w-4 h-0.5 bg-gray-600"></div>
+                    <div class="arch-box box-sensor w-full p-3 flex-row items-center opacity-70 h-auto">
+                        <i class="fas fa-thermometer-half box-icon text-sm mr-2"></i>
+                        <div>
+                            <p class="font-mono font-bold text-xs">Sensor (Temp)</p>
+                            <p class="text-[0.65rem] text-gray-400">Map(AirData -> Event)</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="absolute left-2 top-[30%] bottom-[30%] w-0.5 bg-gray-600"></div>
+            </div>
+        </div>
+
+        <div class="mt-8 grid grid-cols-3 gap-6 border-t border-gray-800 pt-6">
+            <div class="flex items-start">
+                <div class="bg-gray-800 p-3 rounded mr-3 text-orange-400">
+                    <i class="fas fa-sync-alt text-xl"></i>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-white mb-1">Ciclo de Leitura</h4>
+                    <p class="text-xs text-gray-400 leading-relaxed">Polling contínuo (1Hz) na porta USB via thread dedicada envia comando "GET DATA".</p>
+                </div>
+            </div>
+            <div class="flex items-start">
+                <div class="bg-gray-800 p-3 rounded mr-3 text-blue-400">
+                    <i class="fas fa-clock text-xl"></i>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-white mb-1">Sincronização</h4>
+                    <p class="text-xs text-gray-400 leading-relaxed">Timestamp gerado via <code>elapsedRealtimeNano()</code> no momento exato do parse.</p>
+                </div>
+            </div>
+            <div class="flex items-start">
+                <div class="bg-gray-800 p-3 rounded mr-3 text-purple-400">
+                    <i class="fas fa-bolt text-xl"></i>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-white mb-1">Eficiência</h4>
+                    <p class="text-xs text-gray-400 leading-relaxed">Thread de leitura dorme automaticamente se nenhum sensor estiver ativo (Activate=false).</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="absolute bottom-0 right-0 w-96 h-96 bg-purple-900 rounded-tl-full opacity-5 pointer-events-none filter blur-3xl"></div>
+    <div class="absolute top-20 left-20 w-64 h-64 bg-blue-900 rounded-full opacity-5 pointer-events-none filter blur-3xl"></div>
+</div>
+</body>
+</html>

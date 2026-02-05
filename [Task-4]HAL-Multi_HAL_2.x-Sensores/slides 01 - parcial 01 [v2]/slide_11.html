@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Validação - Resultados de Testes</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+    <style>
+        /* --- ESTILOS GERAIS --- */
+        body { 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Roboto', sans-serif; 
+            background-color: #000000; 
+            color: white; 
+            overflow: hidden; 
+        }
+
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* Container Fullscreen */
+        .slide-container { 
+            width: 100vw; 
+            height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            background-color: #0f172a; 
+            position: relative;
+        }
+
+        /* --- CARDS E GRID --- */
+        .result-card {
+            background-color: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(51, 65, 85, 0.8);
+            border-radius: 12px;
+            padding: 16px; /* Padding interno um pouco menor para caber tudo */
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .result-card:hover {
+            border-color: rgba(99, 102, 241, 0.5);
+            background-color: rgba(30, 41, 59, 0.9);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+            z-index: 20;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(71, 85, 105, 0.4);
+            flex-shrink: 0;
+        }
+
+        .icon-box {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 1.1rem;
+        }
+
+        /* Código / Logs */
+        .code-snippet {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: #020617;
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 0.75rem; /* Ajustado para leitura */
+            color: #d1d5db;
+            line-height: 1.4;
+            border-left: 3px solid #64748b;
+            overflow-y: auto; /* Scroll se necessário */
+            flex-grow: 1; /* Ocupa o resto do card */
+            white-space: pre-wrap;
+        }
+
+        /* Highlighting de Logs */
+        .log-time { color: #60a5fa; }
+        .log-tag { color: #a78bfa; font-weight: bold; }
+        .log-success { color: #34d399; }
+        .log-warn { color: #fbbf24; }
+
+        .status-badge {
+            font-size: 0.65rem;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Cores Específicas por Card */
+        .card-logcat .icon-box { background-color: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+        .card-logcat .code-snippet { border-left-color: #3b82f6; }
+
+        .card-dumpsys .icon-box { background-color: rgba(16, 185, 129, 0.2); color: #34d399; }
+        .card-dumpsys .code-snippet { border-left-color: #10b981; }
+
+        .card-dmesg .icon-box { background-color: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+        .card-dmesg .code-snippet { border-left-color: #f59e0b; }
+
+        .card-power .icon-box { background-color: rgba(239, 68, 68, 0.2); color: #f87171; }
+
+        /* Flow Chart do Power Management */
+        .power-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: auto;
+            margin-bottom: auto;
+            padding: 10px 0;
+        }
+
+        .flow-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .flow-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #1e293b;
+            border: 2px solid #475569;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #94a3b8;
+            transition: all 0.3s;
+        }
+
+        .flow-line {
+            flex-grow: 1;
+            height: 2px;
+            background-color: #334155;
+            margin: 0 5px 26px; /* Ajuste para alinhar com o circulo */
+            position: relative;
+        }
+
+        .flow-line::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: -3px;
+            width: 0;
+            height: 0;
+            border-top: 4px solid transparent;
+            border-bottom: 4px solid transparent;
+            border-left: 6px solid #334155;
+        }
+
+        /* Estado Ativo do Flow */
+        .active-step .flow-circle {
+            border-color: #34d399;
+            background-color: rgba(52, 211, 153, 0.1);
+            color: #34d399;
+            box-shadow: 0 0 10px rgba(52, 211, 153, 0.2);
+        }
+        .active-line { background-color: #34d399; }
+        .active-line::after { border-left-color: #34d399; }
+
+        /* Botão Tela Cheia */
+        .fullscreen-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 50;
+            transition: background 0.3s;
+        }
+        .fullscreen-btn:hover { background: rgba(255,255,255,0.2); }
+
+        /* Grid Layout */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 20px;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="slide-container" id="slideContainer">
+        
+        <div class="pt-6 px-12 flex items-center justify-between z-10 mb-4 shrink-0">
+            <div>
+                <div class="flex items-center space-x-3 mb-1">
+                    <span class="px-2 py-0.5 bg-green-900/50 border border-green-500/30 text-green-200 text-xs font-mono rounded font-bold uppercase tracking-wider">Validação</span>
+                    <span class="text-gray-500 text-sm font-mono tracking-widest">TESTES & RESULTADOS</span>
+                </div>
+                <h1 class="text-4xl font-bold text-white tracking-tight">Resultados de Validação</h1>
+            </div>
+            
+            <div class="flex items-center space-x-3 bg-slate-800 p-2 rounded-lg border border-slate-700">
+                <i class="fas fa-tasks text-gray-400 text-2xl"></i>
+                <div class="h-6 w-px bg-gray-600"></div>
+                <i class="fas fa-clipboard-check text-green-400 text-2xl"></i>
+            </div>
+        </div>
+
+        <div class="flex-1 px-12 pb-6 z-10 overflow-hidden">
+            <div class="main-grid">
+                
+                <div class="result-card card-logcat">
+                    <div class="card-header">
+                        <div class="icon-box"><i class="fas fa-terminal"></i></div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-100">Logcat & Ciclo de Vida</h3>
+                            <p class="text-xs text-gray-400">Logs do sistema (Inicialização)</p>
+                        </div>
+                        <div class="ml-auto status-badge bg-blue-900 text-blue-300">HAL Ativa</div>
+                    </div>
+                    <div class="code-snippet">
+<span class="log-time">10:42:05.123</span> <span class="log-tag">AirQualitySubHal</span>: Entry Point CHAMADO! Ver: 0x02000000
+<span class="log-time">10:42:05.150</span> <span class="log-tag">AirQualitySerial</span>: Thread Serial Iniciada.
+<span class="log-time">10:42:15.200</span> <span class="log-tag">AirQualitySerial</span>: Status Polling: <span class="log-success">ATIVO (GET DATA)</span>
+<span class="log-time">10:42:15.250</span> <span class="log-tag">AirQualitySerial</span>: <span class="log-success">>>> CONECTADO A /dev/ttyUSB0 (115200) <<<</span>
+<span class="log-time">10:42:15.800</span> <span class="log-tag">AirQualitySerial</span>: [JSON] Parse Sucesso: PM2.5=40.00</div>
+                </div>
+
+                <div class="result-card card-dumpsys">
+                    <div class="card-header">
+                        <div class="icon-box"><i class="fas fa-list-ul"></i></div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-100">SensorService (Dumpsys)</h3>
+                            <p class="text-xs text-gray-400">Integração com o Framework</p>
+                        </div>
+                        <div class="ml-auto status-badge bg-green-900 text-green-300">Registrado</div>
+                    </div>
+                    <div class="code-snippet">
+$ adb shell dumpsys sensorservice
+Sensor List:
+... Sensor de Particulas PM2.5 | <span class="log-success">Projeto AirStation (ESP32)</span>
+    ver: 1 | type: com.airstation.sensor.pm25(65537)
+... Sensor de Monoxido (CO)    | <span class="log-success">Projeto AirStation (ESP32)</span>
+    ver: 1 | type: com.airstation.sensor.co(65539)
+... Ambient Temperature        | <span class="log-success">Projeto AirStation (ESP32)</span></div>
+                </div>
+
+                <div class="result-card card-dmesg">
+                    <div class="card-header">
+                        <div class="icon-box"><i class="fab fa-usb"></i></div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-100">Kernel & Hardware (dmesg)</h3>
+                            <p class="text-xs text-gray-400">Reconhecimento físico (Hotplug)</p>
+                        </div>
+                        <div class="ml-auto status-badge bg-yellow-900 text-yellow-300">Attached</div>
+                    </div>
+                    <div class="code-snippet">
+[ 1240.528] usb 1-1: new full-speed USB device number 4
+[ 1240.672] usb 1-1: <span class="log-warn">New USB device found</span>, idVendor=10c4, idProduct=ea60
+[ 1240.685] usb 1-1: cp210x converter now attached to <span class="log-success">ttyUSB0</span>
+[ 1240.690] ueventd: firmware: loading 'cp210x' for device
+[ 1240.695] selinux: <span class="log-success">avc: granted { read write open }</span> scontext=u:r:hal_sensors...</div>
+                </div>
+
+                <div class="result-card card-power">
+                    <div class="card-header">
+                        <div class="icon-box"><i class="fas fa-battery-half"></i></div>
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-100">Gerenciamento de Energia</h3>
+                            <p class="text-xs text-gray-400">Comportamento Dinâmico</p>
+                        </div>
+                        <div class="ml-auto status-badge bg-red-900 text-red-300">Otimizado</div>
+                    </div>
+                    <div class="flex flex-col justify-center flex-grow px-4">
+                        <p class="text-xs text-gray-300 mb-6 text-center leading-relaxed">
+                            A conexão serial é aberta <strong>exclusivamente</strong> quando um aplicativo solicita dados (Poll), economizando bateria.
+                        </p>
+                        
+                        <div class="power-flow">
+                            <div class="flow-step active-step">
+                                <div class="flow-circle"><i class="fas fa-mobile-alt"></i></div>
+                                <span class="text-[10px] text-gray-400 font-mono">App Start</span>
+                            </div>
+                            <div class="flow-line active-line"></div>
+                            <div class="flow-step active-step">
+                                <div class="flow-circle"><i class="fas fa-bolt"></i></div>
+                                <span class="text-[10px] text-gray-400 font-mono">Activate()</span>
+                            </div>
+                            <div class="flow-line active-line"></div>
+                            <div class="flow-step active-step">
+                                <div class="flow-circle"><i class="fas fa-plug"></i></div>
+                                <span class="text-[10px] text-green-400 font-bold font-mono">Open Serial</span>
+                            </div>
+                            <div class="flow-line"></div>
+                            <div class="flow-step">
+                                <div class="flow-circle"><i class="fas fa-pause"></i></div>
+                                <span class="text-[10px] text-gray-400 font-mono">Deactivate()</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 bg-gray-800/50 rounded p-2 text-center border border-gray-700">
+                            <p class="text-[10px] font-mono text-gray-400">Status Atual: <span class="text-green-400 font-bold">POLLING ATIVO</span></p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="absolute top-0 right-0 w-96 h-96 bg-green-900 rounded-bl-full opacity-10 pointer-events-none filter blur-[80px]"></div>
+        <div class="absolute bottom-0 left-0 w-80 h-80 bg-blue-900 rounded-tr-full opacity-10 pointer-events-none filter blur-[80px]"></div>
+        
+        <button onclick="toggleFullScreen()" class="fullscreen-btn" title="Tela Cheia">
+            <i class="fas fa-expand"></i>
+        </button>
+
+    </div>
+
+    <script>
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    alert(`Erro ao tentar ativar tela cheia: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+    </script>
+</body>
+</html>

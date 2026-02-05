@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Slide 08 - Implementação HAL</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+    <style>
+        /* --- CORE STYLES --- */
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #0f172a; /* Slate 900 */
+            color: white;
+            width: 100%;
+            height: 100%;
+        }
+
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+        .slide-container {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* --- CODE BLOCK STYLES --- */
+        .code-block {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: #1e293b; /* Slate 800 */
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 16px;
+            font-size: 0.75rem; /* Levemente menor para caber código C++ */
+            line-height: 1.5;
+            color: #e2e8f0;
+            overflow-x: auto;
+            position: relative;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Syntax Highlighting */
+        .keyword { color: #c084fc; } /* purple-400 */
+        .string { color: #86efac; } /* green-300 */
+        .comment { color: #94a3b8; font-style: italic; } /* slate-400 */
+        .variable { color: #fca5a5; } /* red-300 */
+        .function { color: #60a5fa; } /* blue-400 */
+        .number { color: #fdba74; } /* orange-300 */
+        .type { color: #fcd34d; } /* amber-300 */
+        
+        /* --- COMPONENT STYLES --- */
+        .bullet-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1.2rem;
+            transition: transform 0.2s;
+        }
+
+        .info-card:hover .bullet-icon {
+            transform: scale(1.1);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+    </style>
+</head>
+<body>
+    <div class="slide-container bg-gray-900 text-white relative">
+        
+        <div class="pt-8 px-6 md:px-12 flex flex-col md:flex-row items-start md:items-center justify-between z-10 mb-6 shrink-0">
+            <div>
+                <div class="flex items-center space-x-3 mb-1">
+                    <span class="px-2 py-0.5 bg-purple-900/40 text-purple-200 text-xs font-mono rounded font-bold uppercase tracking-wider border border-purple-500/30">HAL</span>
+                    <span class="text-gray-500 text-sm font-mono tracking-widest">MULTI-HAL 2.0</span>
+                </div>
+                <h1 class="text-3xl md:text-4xl font-bold text-white tracking-tight">Avanços – Implementação HAL</h1>
+            </div>
+            
+            <div class="flex items-center space-x-4 mt-4 md:mt-0 bg-gray-800 p-2 rounded-lg border border-gray-700">
+                <i class="fas fa-microchip text-gray-400 text-2xl"></i>
+                <div class="h-6 w-px bg-gray-600"></div>
+                <i class="fas fa-layer-group text-purple-400 text-2xl"></i>
+                <div class="h-6 w-px bg-gray-600"></div>
+                <i class="fab fa-android text-gray-400 text-2xl"></i>
+            </div>
+        </div>
+
+        <div class="flex-1 px-6 md:px-12 pb-12 grid grid-cols-1 lg:grid-cols-2 gap-8 z-10 overflow-y-auto">
+            
+            <div class="flex flex-col space-y-6 lg:justify-center">
+                
+                <div class="info-card bg-gray-800/60 p-5 rounded-xl border border-gray-700 hover:border-purple-500 transition-all duration-300 hover:shadow-[0_0_20px_rgba(168,85,247,0.15)] group">
+                    <div class="flex items-start mb-3">
+                        <div class="bullet-icon bg-purple-900/40 text-purple-400 mr-4 border border-purple-500/20 group-hover:bg-purple-900/60">
+                            <i class="fas fa-sitemap"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-purple-100 mb-1">Estrutura Modular (SOLID)</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                Arquitetura limpa com separação de responsabilidades para facilitar manutenção e escalabilidade do driver.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="ml-[56px] grid grid-cols-2 gap-2 mt-2">
+                        <div class="flex items-center text-xs text-purple-200 font-mono bg-purple-900/20 px-2 py-1 rounded border border-purple-500/20">
+                            <i class="fas fa-cube text-[8px] mr-2 text-purple-400"></i>AirQualitySubHal
+                        </div>
+                        <div class="flex items-center text-xs text-purple-200 font-mono bg-purple-900/20 px-2 py-1 rounded border border-purple-500/20">
+                            <i class="fas fa-cube text-[8px] mr-2 text-purple-400"></i>AirQualitySensor
+                        </div>
+                        <div class="flex items-center text-xs text-purple-200 font-mono bg-purple-900/20 px-2 py-1 rounded border border-purple-500/20">
+                            <i class="fas fa-cube text-[8px] mr-2 text-purple-400"></i>SerialReader
+                        </div>
+                        <div class="flex items-center text-xs text-purple-200 font-mono bg-purple-900/20 px-2 py-1 rounded border border-purple-500/20">
+                            <i class="fas fa-cube text-[8px] mr-2 text-purple-400"></i>JsonParser
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-card bg-gray-800/60 p-5 rounded-xl border border-gray-700 hover:border-yellow-500 transition-all duration-300 hover:shadow-[0_0_20px_rgba(234,179,8,0.15)] group">
+                    <div class="flex items-start">
+                        <div class="bullet-icon bg-yellow-900/40 text-yellow-400 mr-4 border border-yellow-500/20 group-hover:bg-yellow-900/60">
+                            <i class="fas fa-door-open"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-yellow-100 mb-1">Entry-Point & Versionamento</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                Implementação rigorosa do ponto de entrada <code class="text-yellow-200 bg-gray-700 px-1 rounded text-xs">sensorsHalGetSubHal</code> exigido pela interface Multi-HAL 2.0 com versão fixa <code class="text-yellow-200 bg-gray-700 px-1 rounded text-xs">0x02000000</code>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-card bg-gray-800/60 p-5 rounded-xl border border-gray-700 hover:border-blue-500 transition-all duration-300 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] group">
+                    <div class="flex items-start">
+                        <div class="bullet-icon bg-blue-900/40 text-blue-400 mr-4 border border-blue-500/20 group-hover:bg-blue-900/60">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-blue-100 mb-1">Conversão de Dados</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                Pipeline de processamento que transforma strings JSON brutas do ESP32 em estruturas nativas <code class="text-blue-200 bg-gray-700 px-1 rounded text-xs">sensors_event_t</code> compatíveis com o Android Framework.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="flex flex-col space-y-5 lg:justify-center">
+                
+                <div class="relative group overflow-visible pt-4">
+                    <div class="absolute top-0 left-4 -translate-y-1/2 px-2 bg-gray-900 text-xs text-purple-300 font-mono border border-purple-900/50 rounded z-10 shadow-sm whitespace-nowrap">
+                        AirQualitySubHal.cpp
+                    </div>
+                    <div class="code-block border-l-4" style="border-left-color: #a855f7;">
+                        <p><span class="comment">// Entry-point oficial da Multi-HAL</span></p>
+                        <p><span class="keyword">extern</span> <span class="string">"C"</span> {</p>
+                        <p>&nbsp;&nbsp;<span class="keyword">__attribute__</span>((visibility(<span class="string">"default"</span>)))</p>
+                        <p>&nbsp;&nbsp;ISensorsSubHal* <span class="function">sensorsHalGetSubHal</span>(<span class="type">uint32_t</span>* version) {</p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (version != <span class="keyword">nullptr</span>) {</p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*version = <span class="variable">SUB_HAL_2_0_VERSION</span>; <span class="comment">// 0x02000000</span></p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;}</p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">static</span> AirQualitySubHal subHal;</p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> &amp;subHal;</p>
+                        <p>&nbsp;&nbsp;}</p>
+                        <p>}</p>
+                    </div>
+                </div>
+
+                <div class="relative group">
+                    <div class="absolute -top-3 left-4 px-2 bg-gray-900 text-xs text-yellow-300 font-mono border border-yellow-900/50 rounded z-10 shadow-sm">
+                        AirQualitySensor.cpp (Conversão)
+                    </div>
+                    <div class="code-block border-l-4" style="border-left-color: #eab308;">
+                        <p><span class="type">Event</span> event;</p>
+                        <p>event.timestamp = <span class="function">android::elapsedRealtimeNano</span>();</p>
+                        <p>event.sensorHandle = mHandle;</p>
+                        <p>event.sensorType = <span class="variable">SensorType</span>::ENVIRONMENTAL_SENSOR;</p>
+                        <p>&nbsp;</p>
+                        <p><span class="comment">// Mapeia JSON para union do evento</span></p>
+                        <p><span class="keyword">if</span> (mType == <span class="variable">SENSOR_PM25</span>) {</p>
+                        <p>&nbsp;&nbsp;event.u.scalar = data.<span class="variable">pm25</span>; <span class="comment">// float ug/m3</span></p>
+                        <p>} <span class="keyword">else if</span> (mType == <span class="variable">SENSOR_CO</span>) {</p>
+                        <p>&nbsp;&nbsp;event.u.scalar = data.<span class="variable">co_ppm</span>; <span class="comment">// float ppm</span></p>
+                        <p>}</p>
+                    </div>
+                </div>
+
+                <div class="relative group">
+                    <div class="absolute -top-3 left-4 px-2 bg-gray-900 text-xs text-blue-300 font-mono border border-blue-900/50 rounded z-10 shadow-sm">
+                        Android.bp
+                    </div>
+                    <div class="code-block border-l-4" style="border-left-color: #3b82f6;">
+                        <p><span class="function">cc_library_shared</span> {</p>
+                        <p>&nbsp;&nbsp;name: <span class="string">"sensors.airquality"</span>,</p>
+                        <p>&nbsp;&nbsp;relative_install_path: <span class="string">"sensors"</span>,</p>
+                        <p>&nbsp;&nbsp;srcs: [<span class="string">"AirQualitySubHal.cpp"</span>, <span class="string">"io/SerialReader.cpp"</span>, ...],</p>
+                        <p>&nbsp;&nbsp;shared_libs: [</p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"liblog"</span>, <span class="string">"libutils"</span>, <span class="string">"libhidlbase"</span>,</p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"android.hardware.sensors@2.0"</span>,</p>
+                        <p>&nbsp;&nbsp;],</p>
+                        <p>}</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="absolute bottom-0 right-0 w-96 h-96 bg-purple-900 rounded-full filter blur-[120px] opacity-10 pointer-events-none z-0"></div>
+        <div class="absolute top-20 left-10 w-64 h-64 bg-blue-900 rounded-full filter blur-[100px] opacity-5 pointer-events-none z-0"></div>
+
+        <button onclick="toggleFullScreen()" 
+                class="fixed bottom-6 right-6 p-3 bg-gray-700 hover:bg-gray-600 text-white rounded-full shadow-lg border border-gray-500 transition-colors z-50 opacity-50 hover:opacity-100"
+                title="Tela Cheia">
+            <i class="fas fa-expand"></i>
+        </button>
+    </div>
+
+    <script>
+        function toggleFullScreen() {
+            var elem = document.documentElement;
+            if (!document.fullscreenElement) {
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.webkitRequestFullscreen) { /* Safari */
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) { /* IE11 */
+                    elem.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) { /* Safari */
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) { /* IE11 */
+                    document.msExitFullscreen();
+                }
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Slide 06 - Kernel e Permissões</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+    <style>
+        /* --- CORE STYLES --- */
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #0f172a; /* Slate 900 */
+            color: white;
+            width: 100%;
+            height: 100%;
+        }
+
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+        .slide-container {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* --- CODE BLOCK STYLES --- */
+        .code-block {
+            font-family: 'JetBrains Mono', monospace;
+            background-color: #1e293b; /* Slate 800 */
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 16px; /* Aumentado para legibilidade */
+            font-size: 0.8rem;
+            line-height: 1.5;
+            color: #e2e8f0;
+            overflow-x: auto; /* Scroll horizontal em mobile */
+            position: relative;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .code-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            /* A cor é definida inline ou via classes utilitárias no HTML */
+        }
+        
+        /* Syntax Highlighting */
+        .keyword { color: #c084fc; } /* purple-400 */
+        .string { color: #86efac; } /* green-300 */
+        .comment { color: #94a3b8; font-style: italic; } /* slate-400 */
+        .variable { color: #fca5a5; } /* red-300 */
+        .function { color: #60a5fa; } /* blue-400 */
+        .number { color: #fdba74; } /* orange-300 */
+        
+        /* --- COMPONENT STYLES --- */
+        .bullet-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 1.2rem;
+            transition: transform 0.2s;
+        }
+
+        .info-card:hover .bullet-icon {
+            transform: scale(1.1);
+        }
+
+        /* Scrollbar customizada para blocos de código */
+        .code-block::-webkit-scrollbar { height: 8px; }
+        .code-block::-webkit-scrollbar-track { background: #0f172a; }
+        .code-block::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        .code-block::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+    </style>
+</head>
+<body>
+    <div class="slide-container bg-gray-900 text-white relative">
+        
+        <div class="pt-8 px-6 md:px-12 flex flex-col md:flex-row items-start md:items-center justify-between z-10 mb-6 shrink-0">
+            <div>
+                <div class="flex items-center space-x-3 mb-1">
+                    <span class="px-2 py-0.5 bg-red-900 text-red-200 text-xs font-mono rounded font-bold uppercase tracking-wider">Kernel</span>
+                    <span class="text-gray-500 text-sm font-mono tracking-widest">DRIVERS & PERMISSÕES</span>
+                </div>
+                <h1 class="text-3xl md:text-4xl font-bold text-white tracking-tight">Avanços – Kernel e Permissões</h1>
+            </div>
+            
+            <div class="flex items-center space-x-4 mt-4 md:mt-0 bg-gray-800 p-2 rounded-lg border border-gray-700">
+                <i class="fab fa-linux text-gray-400 text-2xl"></i>
+                <div class="h-6 w-px bg-gray-600"></div>
+                <i class="fas fa-shield-alt text-gray-400 text-2xl"></i>
+                <div class="h-6 w-px bg-gray-600"></div>
+                <i class="fab fa-android text-green-500 text-2xl"></i>
+            </div>
+        </div>
+
+        <div class="flex-1 px-6 md:px-12 pb-12 grid grid-cols-1 lg:grid-cols-2 gap-8 z-10 overflow-y-auto">
+            
+            <div class="flex flex-col space-y-6 lg:justify-center">
+                
+                <div class="info-card bg-gray-800/60 p-5 rounded-xl border border-gray-700 hover:border-blue-500 transition-all duration-300 hover:shadow-[0_0_20px_rgba(59,130,246,0.15)] group">
+                    <div class="flex items-start mb-3">
+                        <div class="bullet-icon bg-blue-900/40 text-blue-400 mr-4 border border-blue-500/20 group-hover:bg-blue-900/60">
+                            <i class="fas fa-usb"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-blue-100 mb-1">Drivers USB Serial Ativados</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                Habilitação de drivers essenciais no Kernel da Motorola (sm8250) para suporte a conversores serial-USB comuns em placas IoT.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="ml-[56px] flex flex-wrap gap-2">
+                        <span class="px-2 py-1 bg-gray-700/50 border border-gray-600 rounded text-xs text-blue-200 font-mono">CP210x</span>
+                        <span class="px-2 py-1 bg-gray-700/50 border border-gray-600 rounded text-xs text-blue-200 font-mono">CH341</span>
+                        <span class="px-2 py-1 bg-gray-700/50 border border-gray-600 rounded text-xs text-blue-200 font-mono">FTDI</span>
+                        <span class="px-2 py-1 bg-gray-700/50 border border-gray-600 rounded text-xs text-blue-200 font-mono">CDC_ACM</span>
+                    </div>
+                </div>
+
+                <div class="info-card bg-gray-800/60 p-5 rounded-xl border border-gray-700 hover:border-green-500 transition-all duration-300 hover:shadow-[0_0_20px_rgba(34,197,94,0.15)] group">
+                    <div class="flex items-start">
+                        <div class="bullet-icon bg-green-900/40 text-green-400 mr-4 border border-green-500/20 group-hover:bg-green-900/60">
+                            <i class="fas fa-user-lock"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-green-100 mb-1">Permissões de Dispositivo</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                Configuração do daemon <code>ueventd</code> para garantir que o nó <code>/dev/ttyUSB*</code> seja propriedade do usuário <code>system</code>, prevenindo captura pelo Bluetooth stack.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-card bg-gray-800/60 p-5 rounded-xl border border-gray-700 hover:border-red-500 transition-all duration-300 hover:shadow-[0_0_20px_rgba(239,68,68,0.15)] group">
+                    <div class="flex items-start">
+                        <div class="bullet-icon bg-red-900/40 text-red-400 mr-4 border border-red-500/20 group-hover:bg-red-900/60">
+                            <i class="fas fa-key"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-red-100 mb-1">Políticas SELinux (Vendor)</h3>
+                            <p class="text-gray-400 text-sm leading-relaxed">
+                                Definição de regras estritas no contexto <code>vendor</code> para permitir que a HAL (hal_sensors_default) acesse os dispositivos seriais com operações específicas (ioctl, read, write).
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="flex flex-col space-y-6 lg:justify-center">
+                
+                <div class="relative group">
+                    <div class="absolute -top-3 left-4 px-2 bg-gray-900 text-xs text-blue-300 font-mono border border-blue-900/50 rounded z-10 shadow-sm">
+                        nio-default.config
+                    </div>
+                    <div class="code-block border-l-4" style="border-left-color: #3b82f6;">
+                        <p><span class="comment"># --- Drivers USB Serial para Estação Ar (ESP32) ---</span></p>
+                        <p><span class="variable">CONFIG_USB_SERIAL</span>=<span class="string">y</span></p>
+                        <p><span class="variable">CONFIG_USB_SERIAL_CP210X</span>=<span class="string">y</span> <span class="comment"># ESP32 DevKit</span></p>
+                        <p><span class="variable">CONFIG_USB_SERIAL_CH341</span>=<span class="string">y</span> <span class="comment"># Clones Chineses</span></p>
+                        <p><span class="variable">CONFIG_USB_SERIAL_FTDI_SIO</span>=<span class="string">y</span> <span class="comment"># Industrial</span></p>
+                        <p><span class="variable">CONFIG_USB_ACM</span>=<span class="string">y</span> <span class="comment"># USB Nativo S2/S3</span></p>
+                    </div>
+                </div>
+
+                <div class="relative group">
+                    <div class="absolute -top-3 left-4 px-2 bg-gray-900 text-xs text-green-300 font-mono border border-green-900/50 rounded z-10 shadow-sm">
+                        ueventd.qcom.rc
+                    </div>
+                    <div class="code-block border-l-4" style="border-left-color: #22c55e;">
+                        <p><span class="comment"># --- Estação de Qualidade do Ar (ESP32) ---</span></p>
+                        <p><span class="comment"># Garante acesso HAL (system) e previne BT</span></p>
+                        <div class="flex">
+                            <span class="mr-4">/dev/ttyUSB*</span>
+                            <span class="mr-4 number">0660</span>
+                            <span class="mr-4 keyword">system</span>
+                            <span class="keyword">system</span>
+                        </div>
+                        <div class="flex">
+                            <span class="mr-4">/dev/ttyACM*</span>
+                            <span class="mr-4 number">0660</span>
+                            <span class="mr-4 keyword">system</span>
+                            <span class="keyword">system</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative group">
+                    <div class="absolute -top-3 left-4 px-2 bg-gray-900 text-xs text-red-300 font-mono border border-red-900/50 rounded z-10 shadow-sm">
+                        sepolicy/vendor/airquality.te
+                    </div>
+                    <div class="code-block border-l-4" style="border-left-color: #ef4444;">
+                        <p><span class="comment"># --- Política SELinux para AirQuality HAL ---</span></p>
+                        <p><span class="function">allow</span> <span class="variable">hal_sensors_default</span> <span class="variable">device</span>:dir <span class="keyword">r_dir_perms</span>;</p>
+                        <p>&nbsp;</p>
+                        <p><span class="comment"># Permissão IOCTL essencial para BaudRate</span></p>
+                        <p><span class="function">allow</span> <span class="variable">hal_sensors_default</span> <span class="variable">usb_serial_device</span>:chr_file {</p>
+                        <p class="pl-4"> <span class="keyword">open</span> <span class="keyword">read</span> <span class="keyword">write</span> <span class="keyword">ioctl</span> <span class="keyword">getattr</span> <span class="keyword">lock</span></p>
+                        <p>};</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="absolute bottom-0 right-0 w-96 h-96 bg-blue-900 rounded-full filter blur-[120px] opacity-10 pointer-events-none z-0"></div>
+        <div class="absolute top-20 left-10 w-64 h-64 bg-red-900 rounded-full filter blur-[100px] opacity-5 pointer-events-none z-0"></div>
+
+        <button onclick="toggleFullScreen()" 
+                class="fixed bottom-6 right-6 p-3 bg-gray-700 hover:bg-gray-600 text-white rounded-full shadow-lg border border-gray-500 transition-colors z-50 opacity-50 hover:opacity-100"
+                title="Tela Cheia">
+            <i class="fas fa-expand"></i>
+        </button>
+    </div>
+
+    <script>
+        function toggleFullScreen() {
+            var elem = document.documentElement;
+            if (!document.fullscreenElement) {
+                if (elem.requestFullscreen) {
+                    elem.requestFullscreen();
+                } else if (elem.webkitRequestFullscreen) { /* Safari */
+                    elem.webkitRequestFullscreen();
+                } else if (elem.msRequestFullscreen) { /* IE11 */
+                    elem.msRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) { /* Safari */
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) { /* IE11 */
+                    document.msExitFullscreen();
+                }
+            }
+        }
+    </script>
+</body>
+</html>
