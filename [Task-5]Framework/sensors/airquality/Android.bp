@@ -1,0 +1,61 @@
+cc_library_shared {
+    name: "sensors.airquality",
+    vendor: true,
+    proprietary: true,
+    relative_install_path: "hw",
+
+    srcs: [
+        "AirQualitySubHal.cpp",
+        "io/SerialReader.cpp",
+        "sensors/AirQualitySensor.cpp",
+        "utils/JsonParser.cpp",
+    ],
+
+    local_include_dirs: [
+        ".",
+        "io",
+        "sensors",
+        "utils",
+    ],
+
+    shared_libs: [
+        "libbase",
+        "liblog",
+        "libutils",
+        "libcutils",
+        "libhidlbase",
+        "libfmq",
+        "libpower",
+        "libjsoncpp", // Sem _headers, como corrigido antes
+        "android.hardware.sensors@1.0",
+        "android.hardware.sensors@2.0",
+        "android.hardware.sensors@2.0-ScopedWakelock",
+    ],
+
+    static_libs: [
+        "android.hardware.sensors@1.0-convert",
+    ],
+
+    header_libs: [
+        "libhardware_headers",
+        "android.hardware.sensors@2.X-multihal.header", 
+    ],
+
+    cflags: [
+        // "-DLOG_TAG=\"AirQualityHAL\"",
+        "-Wall",
+        "-Werror",
+        "-Wno-unused-parameter",
+    ],
+}
+
+cc_binary {
+    name: "airquality_full_test",
+    srcs: ["full_sanity_test.cpp"],
+    shared_libs: [
+        "libandroid",
+        "liblog",
+        "libutils",
+    ],
+    cflags: ["-Wall", "-Werror"],
+}

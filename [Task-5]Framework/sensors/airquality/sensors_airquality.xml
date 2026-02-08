@@ -1,0 +1,9 @@
+<sensor-hal>
+    <modules>
+        <module>
+            <name>sensors.airquality</name>
+            <path>/vendor/lib64/hw/sensors.airquality.so</path>
+        </module>
+    </modules>
+</sensor-hal>
+
