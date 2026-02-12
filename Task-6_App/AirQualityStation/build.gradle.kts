@@ -9,4 +9,5 @@ plugins {
 
     // KSP (Substituto moderno do KAPT) - Versão compatível com Kotlin moderno
     alias(libs.plugins.ksp) apply false
+
 }
