@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <ArduinoJson.h>
 #include "SdsDustSensor.h"
 #include "DHT.h"
 
@@ -9,7 +10,7 @@
 #define DHT_SENSOR 4
 #define DHTTYPE DHT11
 
-#define SENSOR_UPDATE_INTERVAL 1000  // ms
+#define SENSOR_UPDATE_INTERVAL 1000
 
 /* ===================== OBJETOS ===================== */
 
@@ -18,122 +19,246 @@ SdsDustSensor sds(Serial2);
 
 /* ===================== VARIÁVEIS ===================== */
 
-unsigned long lastSensorUpdate = 0;
+String inputBuffer = "";
 
-int mq2Value = 0;
-int mq7Value = 0;
-float pm25Value = 0;
-float pm10Value = 0;
+unsigned long lastUpdate = 0;
+
+int mq2_raw = 0;
+int mq7_raw = 0;
+float pm25 = 0;
+float pm10 = 0;
 float temperature = 0;
 float humidity = 0;
 
-/* ===================== SERIAL ===================== */
+// Fatores de calibração
+float calib_sds = 1.0;
+float calib_mq2 = 1.0;
+float calib_mq7 = 1.0;
+float calib_temp = 0.0;
+float calib_hum = 0.0;
 
-void processCommand(String cmd)
-{
-    cmd.trim();
-    cmd.toUpperCase();
+/* ===================== LEITURA DOS SENSORES ===================== */
 
-    if (cmd == "GET_MQ2")
-        Serial.printf("RES GET_MQ2 %d\n", mq2Value);
+void updateSensors() {
 
-    else if (cmd == "GET_MQ7")
-        Serial.printf("RES GET_MQ7 %d\n", mq7Value);
+  // MQ
+  mq2_raw = analogRead(MQ2_SENSOR);
+  mq7_raw = analogRead(MQ7_SENSOR);
 
-    else if (cmd == "GET_PM25")
-        Serial.printf("RES GET_PM25 %.1f\n", pm25Value);
+  // SDS011
+  PmResult pm = sds.readPm();
+  if (pm.isOk()) {
+    pm25 = pm.pm25 * calib_sds;
+    pm10 = pm.pm10 * calib_sds;
+  }
 
-    else if (cmd == "GET_PM10")
-        Serial.printf("RES GET_PM10 %.1f\n", pm10Value);
+  // DHT11
+  float h = dht.readHumidity();
+  float t = dht.readTemperature();
 
-    else if (cmd == "GET_TEMP")
-        Serial.printf("RES GET_TEMP %.1f\n", temperature);
-
-    else if (cmd == "GET_HUM")
-        Serial.printf("RES GET_HUM %.1f\n", humidity);
-
-    else if (cmd == "GET_ALL")
-    {
-        Serial.printf(
-            "RES GET_ALL MQ2=%d MQ7=%d PM25=%.1f PM10=%.1f TEMP=%.1f HUM=%.1f\n",
-            mq2Value, mq7Value, pm25Value, pm10Value, temperature, humidity
-        );
-    }
-    else
-        Serial.println("ERR UNKNOWN_COMMAND");
+  if (!isnan(h) && !isnan(t)) {
+    humidity = h + calib_hum;
+    temperature = t + calib_temp;
+  }
 }
 
-void handleSerial()
-{
-    static String command = "";
+/* ===================== JSON RESPONSES ===================== */
 
-    while (Serial.available())
-    {
-        char c = Serial.read();
-        command += c;
+void sendSensorData(String target) {
 
-        if (c == '\n')
-        {
-            processCommand(command);
-            command = "";
-        }
-    }
+  JsonDocument doc;
+
+  doc["type"] = "data";
+  doc["src"] = "serial";
+
+  JsonObject payload = doc["payload"].to<JsonObject>();
+
+  if (target == "ALL" || target == "SDS011") {
+    payload["pm25"] = round(pm25 * 10) / 10.0;
+    payload["pm10"] = round(pm10 * 10) / 10.0;
+  }
+
+  if (target == "ALL" || target == "MQ2") {
+    payload["mq2_raw"] = mq2_raw;
+  }
+
+  if (target == "ALL" || target == "MQ7") {
+    payload["mq7_raw"] = mq7_raw;
+  }
+
+  if (target == "ALL" || target == "DHT") {
+    payload["temp_c"] = round(temperature * 10) / 10.0;
+    payload["humid_p"] = round(humidity * 10) / 10.0;
+  }
+
+  serializeJson(doc, Serial);
+  Serial.println();
 }
 
-/* ===================== SENSORES ===================== */
+void sendSettings() {
+  JsonDocument doc;
+  doc["type"] = "settings";
+  doc["device_id"] = "AIR_STATION_REAL";
 
-void updateSensors()
-{
-    if (millis() - lastSensorUpdate < SENSOR_UPDATE_INTERVAL)
-        return;
+  JsonObject calib = doc["calib"].to<JsonObject>();
+  calib["sds_factor"] = calib_sds;
+  calib["mq2_factor"] = calib_mq2;
+  calib["mq7_factor"] = calib_mq7;
+  calib["temp_offset"] = calib_temp;
+  calib["hum_offset"] = calib_hum;
 
-    lastSensorUpdate = millis();
+  serializeJson(doc, Serial);
+  Serial.println();
+}
 
-    // MQ-2 e MQ-7
-    mq2Value = map(analogRead(MQ2_SENSOR), 0, 4095, 0, 100);
-    mq7Value = map(analogRead(MQ7_SENSOR), 0, 4095, 0, 100);
+void handleCalibration(String cmd) {
 
-    // SDS011
-    PmResult pm = sds.readPm();
-    if (pm.isOk())
-    {
-        pm25Value = pm.pm25;
-        pm10Value = pm.pm10;
-    }
+  // Esperado: SET CALIB SDS 1.1
+  int firstSpace = cmd.indexOf(' ');
+  int secondSpace = cmd.indexOf(' ', firstSpace + 1);
+  int thirdSpace = cmd.indexOf(' ', secondSpace + 1);
 
-    // DHT11
-    float h = dht.readHumidity();
-    float t = dht.readTemperature();
+  if (secondSpace == -1 || thirdSpace == -1)
+    return;
 
-    if (!isnan(h) && !isnan(t))
-    {
-        humidity = h;
-        temperature = t;
-    }
+  String target = cmd.substring(secondSpace + 1, thirdSpace);
+  String valStr = cmd.substring(thirdSpace + 1);
+
+  float val = valStr.toFloat();
+
+  if (target == "SDS") calib_sds = val;
+  else if (target == "MQ2") calib_mq2 = val;
+  else if (target == "MQ7") calib_mq7 = val;
+  else if (target == "TEMP") calib_temp = val;
+  else if (target == "HUM") calib_hum = val;
+  else return;
+
+  JsonDocument doc;
+  doc["type"] = "ack";
+  doc["cmd"] = "set_calib";
+
+  target.toLowerCase();
+  doc["target"] = target;
+  doc["new_val"] = val;
+  doc["status"] = "saved";
+
+  serializeJson(doc, Serial);
+  Serial.println();
+}
+
+
+void sendStatus() {
+  JsonDocument doc;
+  doc["type"] = "status";
+  doc["uptime_sec"] = millis() / 1000;
+
+  JsonObject sensors = doc["sensors"].to<JsonObject>();
+  sensors["sds011"] = "ok";
+  sensors["mq2"] = "ok";
+  sensors["mq7"] = "ok";
+  sensors["dht11"] = "ok";
+
+  serializeJson(doc, Serial);
+  Serial.println();
+}
+
+void sendMetadata() {
+  JsonDocument doc;
+  doc["type"] = "metadata";
+
+  JsonArray sensors = doc["sensors"].to<JsonArray>();
+
+  JsonObject s1 = sensors.add<JsonObject>();
+  s1["id"] = "pm25"; s1["unit"] = "ug/m3";
+
+  JsonObject s2 = sensors.add<JsonObject>();
+  s2["id"] = "pm10"; s2["unit"] = "ug/m3";
+
+  JsonObject s3 = sensors.add<JsonObject>();
+  s3["id"] = "mq2_raw"; s3["unit"] = "adc";
+
+  JsonObject s4 = sensors.add<JsonObject>();
+  s4["id"] = "mq7_raw"; s4["unit"] = "adc";
+
+  JsonObject s5 = sensors.add<JsonObject>();
+  s5["id"] = "temp_c"; s5["unit"] = "C";
+
+  JsonObject s6 = sensors.add<JsonObject>();
+  s6["id"] = "humid_p"; s6["unit"] = "%";
+
+  serializeJson(doc, Serial);
+  Serial.println();
+}
+
+/* ===================== PROCESSADOR ===================== */
+
+void processCommand(String cmd) {
+
+  cmd.toUpperCase();
+
+  if (cmd == "GET DATA" || cmd == "GET DATA ALL")
+    sendSensorData("ALL");
+
+  else if (cmd == "GET DATA SDS011")
+    sendSensorData("SDS011");
+
+  else if (cmd == "GET DATA MQ2")
+    sendSensorData("MQ2");
+
+  else if (cmd == "GET DATA MQ7")
+    sendSensorData("MQ7");
+
+  else if (cmd == "GET DATA DHT")
+    sendSensorData("DHT");
+
+  else if (cmd == "GET SETTINGS")
+    sendSettings();
+
+  else if (cmd.startsWith("SET CALIB "))
+    handleCalibration(cmd);
+
+  else if (cmd == "GET STATUS")
+    sendStatus();
+
+  else if (cmd == "GET METADATA")
+    sendMetadata();
 }
 
 /* ===================== SETUP ===================== */
 
-void setup()
-{
-    Serial.begin(9600);
+void setup() {
+  Serial.begin(115200);
+  inputBuffer.reserve(200);
 
-    sds.begin();
-    dht.begin();
+  dht.begin();
+  sds.begin();
+  sds.setActiveReportingMode();
+  sds.setContinuousWorkingPeriod();
 
-    analogSetAttenuation(ADC_11db);
+  analogSetAttenuation(ADC_11db);
 
-    // Inicialização do SDS011
-    sds.setActiveReportingMode();
-    sds.setContinuousWorkingPeriod();
-
-    Serial.println("DBG ENV_SENSOR Initialized");
+  Serial.println("{\"type\":\"boot\",\"device\":\"AIR_STATION_REAL\"}");
 }
 
 /* ===================== LOOP ===================== */
 
-void loop()
-{
-    handleSerial();
+void loop() {
+
+  // ===== SERIAL HANDLER =====
+  while (Serial.available()) {
+    char c = (char)Serial.read();
+    if (c == '\n') {
+      inputBuffer.trim();
+      processCommand(inputBuffer);
+      inputBuffer = "";
+    } else {
+      inputBuffer += c;
+    }
+  }
+
+  // ===== ATUALIZA SENSORES =====
+  if (millis() - lastUpdate > SENSOR_UPDATE_INTERVAL) {
     updateSensors();
+    lastUpdate = millis();
+  }
 }
