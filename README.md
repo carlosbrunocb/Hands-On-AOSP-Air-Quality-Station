@@ -50,7 +50,7 @@ Para compilar e testar o AOSP, é recomendável ter:
 ## Bônus (_Extra Features_)
 Implementar na estação a leitura de **Temperatura** e **Humidade** do ar por meio do **sensor DHT11 ou DHT22**, e a presença de **altas concentrações de Monóxido de Carbono** adicionando o **sensor de MQ7** no sistema.
 
-### Rercusos
+### Recursos
 - Sensor DHT11 ou DHT22 para Temperatura e Humidade.
 - Sensor MQ7 para Monóxido de Carbono.
 
