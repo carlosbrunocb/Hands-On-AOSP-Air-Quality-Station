@@ -86,4 +86,15 @@ dependencies {
 
     // ADICIONE ESTA LINHA PARA OS ÍCONES (CO2, Nuvem, Fogo, etc):
     implementation("androidx.compose.material:material-icons-extended:1.6.0")
+
+    // 1. WorkManager (Segundo Plano)
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
+    implementation("androidx.hilt:hilt-work:1.2.0") // Hilt para WorkManager
+    ksp("androidx.hilt:hilt-compiler:1.2.0")        // Importante para HiltWorker
+
+    // 2. DataStore (Preferências/Configurações)
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+    // 3. Permissões (Para Notificações no Android 13+)
+    implementation("com.google.accompanist:accompanist-permissions:0.34.0")
 }

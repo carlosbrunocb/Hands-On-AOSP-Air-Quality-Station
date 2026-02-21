@@ -14,15 +14,20 @@ import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
 import com.patrykandpatrick.vico.core.entry.entryModelOf
+import com.patrykandpatrick.vico.core.axis.AxisPosition
+import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import com.patrykandpatrick.vico.core.entry.FloatEntry
 
 @Composable
 fun HistoryScreen(viewModel: DashboardViewModel) {
-    // Coleta os estados do ViewModel corrigido
     val selectedSensor by viewModel.selectedHistorySensor.collectAsState()
     val history by viewModel.historyState.collectAsState()
 
     Column(modifier = Modifier.padding(16.dp)) {
-        Text("Histórico de Leituras", style = MaterialTheme.typography.headlineSmall)
+        Text("Análise Detalhada", style = MaterialTheme.typography.headlineSmall)
         Spacer(modifier = Modifier.height(16.dp))
 
         // 1. Abas para selecionar o Sensor
@@ -43,46 +48,53 @@ fun HistoryScreen(viewModel: DashboardViewModel) {
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // 2. Área do Gráfico
+        // 2. Área do Gráfico Profissional
         Card(
-            modifier = Modifier.fillMaxWidth().height(300.dp),
+            modifier = Modifier.fillMaxWidth().height(320.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
-            // Só desenha o gráfico se tiver pelo menos 2 pontos
             if (history.size > 1) {
-                // Prepara os dados para o Vico
-                // Mapeamos apenas os valores (Y) -> O Vico calcula o X automaticamente por índice
-                val chartEntryModel = entryModelOf(*history.map { it.value }.toTypedArray())
+                // CORREÇÃO: Convertendo o histórico em uma lista de FloatEntry
+                val entries = history.mapIndexed { index, reading ->
+                    FloatEntry(x = index.toFloat(), y = reading.value.toFloat())
+                }
+                val chartEntryModel = entryModelOf(entries)
+
+                // Formatador do Eixo X (Tempo)
+                val bottomAxisFormatter = AxisValueFormatter<AxisPosition.Horizontal.Bottom> { value, _ ->
+                    val index = value.toInt()
+                    if (index >= 0 && index < history.size) {
+                        val date = Date(System.currentTimeMillis() - (history.size - index) * 1000L)
+                        SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(date)
+                    } else ""
+                }
+
+                // Formatador do Eixo Y (Valores)
+                val startAxisFormatter = AxisValueFormatter<AxisPosition.Vertical.Start> { value, _ ->
+                    "%.1f".format(value)
+                }
 
                 Chart(
                     chart = lineChart(),
                     model = chartEntryModel,
-                    startAxis = rememberStartAxis(),
-                    bottomAxis = rememberBottomAxis(),
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .fillMaxSize()
+                    startAxis = rememberStartAxis(
+                        valueFormatter = startAxisFormatter,
+                        title = "Valor" // Título do Eixo Y
+                    ),
+                    bottomAxis = rememberBottomAxis(
+                        valueFormatter = bottomAxisFormatter,
+                        title = "Tempo", // Título do Eixo X
+                        labelRotationDegrees = 45f // Rotação para a hora não sobrepor
+                    ),
+                    modifier = Modifier.padding(16.dp).fillMaxSize()
                 )
             } else {
-                // Estado vazio (Enquanto coleta dados)
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         CircularProgressIndicator(modifier = Modifier.size(24.dp))
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = if (history.isEmpty()) "Aguardando dados..." else "Coletando mais amostras...",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color.Gray
-                        )
-                        Text(
-                            text = "(Aguarde alguns segundos)",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = Color.LightGray
-                        )
+                        Text(if (history.isEmpty()) "Aguardando dados..." else "Traçando eixos...", color = Color.Gray)
                     }
                 }
             }
@@ -95,17 +107,16 @@ fun HistoryScreen(viewModel: DashboardViewModel) {
             val max = history.maxOf { it.value }
             val avg = history.map { it.value }.average()
 
-            Text("Estatísticas (Últimos 10 min):", style = MaterialTheme.typography.labelLarge)
+            Text("Estatísticas da Amostra:", style = MaterialTheme.typography.labelLarge)
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                Text("Min: %.1f".format(min))
-                Text("Méd: %.1f".format(avg))
-                Text("Max: %.1f".format(max))
+                Text("📉 Min: %.1f".format(min))
+                Text("📊 Méd: %.1f".format(avg))
+                Text("📈 Max: %.1f".format(max))
             }
         }
     }
 }
 
-// Função auxiliar para saber o índice da aba
 fun getTabIndex(type: SensorType): Int {
     return when(type) {
         SensorType.PM25 -> 0

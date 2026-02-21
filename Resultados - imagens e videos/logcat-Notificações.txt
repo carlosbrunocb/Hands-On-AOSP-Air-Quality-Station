@@ -1,0 +1,129 @@
+---------------------------- PROCESS ENDED (6203) for package com.airstation.app ----------------------------
+---------------------------- PROCESS STARTED (6754) for package com.airstation.app ----------------------------
+Unable to open '/data/app/~~-tQn7qm5Lu2F_xBIX3wsmg==/com.airstation.app-mpFJsG9fZ5gNFDJH3Eo_zA==/base.dm': No such file or directory
+Unable to open '/data/app/~~-tQn7qm5Lu2F_xBIX3wsmg==/com.airstation.app-mpFJsG9fZ5gNFDJH3Eo_zA==/base.dm': No such file or directory
+Configuring clns-4 for other apk /data/app/~~-tQn7qm5Lu2F_xBIX3wsmg==/com.airstation.app-mpFJsG9fZ5gNFDJH3Eo_zA==/base.apk. target_sdk_version=35, uses_libraries=, library_path=/data/app/~~-tQn7qm5Lu2F_xBIX3wsmg==/com.airstation.app-mpFJsG9fZ5gNFDJH3Eo_zA==/lib/arm64:/data/app/~~-tQn7qm5Lu2F_xBIX3wsmg==/com.airstation.app-mpFJsG9fZ5gNFDJH3Eo_zA==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.airstation.app
+Currently set values for:
+  angle_gl_driver_selection_pkgs=[]
+  angle_gl_driver_selection_values=[]
+Global.Settings values are invalid: number of packages: 0, number of values: 0
+Updatable production driver is not supported on the device.
+Skipping component enablement for androidx.work.impl.background.systemjob.SystemJobService
+Created SystemJobScheduler and enabled SystemJobService
+Compat change id reported: 279646685; UID 10193; state: DISABLED
+Compat change id reported: 160794467; UID 10193; state: ENABLED
+Compat change id reported: 194532703; UID 10193; state: ENABLED
+Compat change id reported: 253665015; UID 10193; state: ENABLED
+Compat change id reported: 311402873; UID 10193; state: DISABLED
+Compat change id reported: 323349338; UID 10193; state: DISABLED
+Compat change id reported: 237531167; UID 10193; state: DISABLED
+Cannot get virtualdevice_native service
+>>> INICIANDO A BUSCA POR SENSORES <<<
+✔ Sensor conectado: Sensor de Particulas PM2.5 (ID: 65537)
+✔ Sensor conectado: Sensor de Particulas PM10 (ID: 65538)
+✔ Sensor conectado: Sensor de Monoxido de Carbono (CO) (ID: 65539)
+✔ Sensor conectado: Sensor de Gas Inflamavel (LPG) (ID: 65540)
+✔ Sensor conectado: Termometro Ambiente (DHT) (ID: 13)
+✔ Sensor conectado: Umidade Relativa (DHT) (ID: 12)
+Method void androidx.compose.runtime.snapshots.SnapshotStateListKt.clearImpl(androidx.compose.runtime.snapshots.SnapshotStateList) failed lock verification and will run slower.
+Common causes for lock verification issues are non-optimized dex code
+and incorrect proguard optimizations.
+Accessing hidden method Landroid/os/SystemProperties;->addChangeCallback(Ljava/lang/Runnable;)V (unsupported, reflection, allowed)
+QUALCOMM build                   : 428fbbc7d8, I593c16c433
+Build Date                       : 09/27/21
+OpenGL ES Shader Compiler Version: EV031.32.02.15
+Local Branch                     : 
+Remote Branch                    : 
+Remote Branch                    : 
+Reconstruct Branch               : 
+Build Config                     : S P 10.0.7 AArch64
+Driver Path                      : /vendor/lib64/egl/libGLESv2_adreno.so
+PFP: 0x016dd093, ME: 0x00000000
+Adding additional valid usage bits: 0x8202000
+>>> INICIANDO A BUSCA POR SENSORES <<<
+✔ Sensor conectado: Sensor de Particulas PM2.5 (ID: 65537)
+✔ Sensor conectado: Sensor de Particulas PM10 (ID: 65538)
+✔ Sensor conectado: Sensor de Monoxido de Carbono (CO) (ID: 65539)
+✔ Sensor conectado: Sensor de Gas Inflamavel (LPG) (ID: 65540)
+✔ Sensor conectado: Termometro Ambiente (DHT) (ID: 13)
+✔ Sensor conectado: Umidade Relativa (DHT) (ID: 12)
+Accessing hidden method Landroid/view/ViewTreeObserver;->dispatchOnScrollChanged()V (unsupported, reflection, allowed)
+OnBackInvokedCallback is not enabled for the application.
+Set 'android:enableOnBackInvokedCallback="true"' in the application manifest.
+Compat change id reported: 171228096; UID 10193; state: ENABLED
+Frame time is 0.117996 ms in the future!  Check that graphics HAL is generating vsync timestamps using the correct timebase.
+visibilityChanged oldVisibility=true newVisibility=false
+Background concurrent copying GC freed 24MB AllocSpace bytes, 0(0B) LOS objects, 78% free, 6674KB/30MB, paused 103us,63us total 106.630ms
+Compat change id reported: 263076149; UID 10193; state: ENABLED
+👷 Worker Iniciado! Verificando CO (Gás Letal) e PM2.5...
+📡 Lendo sensor de CO...
+>>> INICIANDO A BUSCA POR SENSORES <<<
+✔ Sensor conectado: Sensor de Particulas PM2.5 (ID: 65537)
+✔ Sensor conectado: Sensor de Particulas PM10 (ID: 65538)
+✔ Sensor conectado: Sensor de Monoxido de Carbono (CO) (ID: 65539)
+✔ Sensor conectado: Sensor de Gas Inflamavel (LPG) (ID: 65540)
+✔ Sensor conectado: Termometro Ambiente (DHT) (ID: 13)
+✔ Sensor conectado: Umidade Relativa (DHT) (ID: 12)
+✅ CO Atual (Tempo Real): 1.409999966621399 ppm
+📊 Calculando média de PM2.5 (Últimos 10 min)...
+📈 Média Histórica PM2.5 calculada: 12.2 µg/m³
+⚠️ Poluição PM2.5 Alta! Enviando notificação simples...
+=======================================
+📋 RESUMO DO WORKER FINALIZADO
+💨 CO Lido: 1.409999966621399 ppm
+🌫️ PM2.5 Calculado: 12.2 µg/m³
+=======================================
+Worker result SUCCESS for Work [ id=64896ad7-b131-4869-aaf9-ab4789e75ceb, tags={ com.airstation.app.worker.AirQualityWorker } ]
+OnBackInvokedCallback is not enabled for the application.
+Set 'android:enableOnBackInvokedCallback="true"' in the application manifest.
+visibilityChanged oldVisibility=true newVisibility=false
+👷 Worker Iniciado! Verificando CO (Gás Letal) e PM2.5...
+📡 Lendo sensor de CO...
+>>> INICIANDO A BUSCA POR SENSORES <<<
+✔ Sensor conectado: Sensor de Particulas PM2.5 (ID: 65537)
+✔ Sensor conectado: Sensor de Particulas PM10 (ID: 65538)
+✔ Sensor conectado: Sensor de Monoxido de Carbono (CO) (ID: 65539)
+✔ Sensor conectado: Sensor de Gas Inflamavel (LPG) (ID: 65540)
+✔ Sensor conectado: Termometro Ambiente (DHT) (ID: 13)
+✔ Sensor conectado: Umidade Relativa (DHT) (ID: 12)
+✅ CO Atual (Tempo Real): 1.4800000190734863 ppm
+📊 Calculando média de PM2.5 (Últimos 10 min)...
+📈 Média Histórica PM2.5 calculada: 24.6 µg/m³
+⚠️ Poluição PM2.5 Alta! Enviando notificação simples...
+=======================================
+📋 RESUMO DO WORKER FINALIZADO
+💨 CO Lido: 1.4800000190734863 ppm
+🌫️ PM2.5 Calculado: 24.6 µg/m³
+=======================================
+Worker result SUCCESS for Work [ id=64896ad7-b131-4869-aaf9-ab4789e75ceb, tags={ com.airstation.app.worker.AirQualityWorker } ]
+Background concurrent copying GC freed 23MB AllocSpace bytes, 0(0B) LOS objects, 78% free, 6562KB/30MB, paused 122us,40us total 100.465ms
+👷 Worker Iniciado! Verificando CO (Gás Letal) e PM2.5...
+📡 Lendo sensor de CO...
+>>> INICIANDO A BUSCA POR SENSORES <<<
+✔ Sensor conectado: Sensor de Particulas PM2.5 (ID: 65537)
+✔ Sensor conectado: Sensor de Particulas PM10 (ID: 65538)
+✔ Sensor conectado: Sensor de Monoxido de Carbono (CO) (ID: 65539)
+✔ Sensor conectado: Sensor de Gas Inflamavel (LPG) (ID: 65540)
+✔ Sensor conectado: Termometro Ambiente (DHT) (ID: 13)
+✔ Sensor conectado: Umidade Relativa (DHT) (ID: 12)
+✅ CO Atual (Tempo Real): 16.600000381469727 ppm
+🚨 PERIGO LETAL! CO acima do limite (16.600000381469727 > 10.0). Disparando sirene!
+Successfully created local player
+📊 Calculando média de PM2.5 (Últimos 10 min)...
+📈 Média Histórica PM2.5 calculada: 45.1 µg/m³
+⚠️ Poluição PM2.5 Alta! Enviando notificação simples...
+=======================================
+📋 RESUMO DO WORKER FINALIZADO
+💨 CO Lido: 16.600000381469727 ppm
+🌫️ PM2.5 Calculado: 45.1 µg/m³
+=======================================
+Worker result SUCCESS for Work [ id=64896ad7-b131-4869-aaf9-ab4789e75ceb, tags={ com.airstation.app.worker.AirQualityWorker } ]
+aidl2legacy_AudioChannelLayout_audio_channel_mask_t: no legacy output audio_channel_mask_t found for AudioChannelLayout{layoutMask: 16}
+aidl2legacy_AudioChannelLayout_audio_channel_mask_t: no legacy output audio_channel_mask_t found for AudioChannelLayout{layoutMask: 16}
+aidl2legacy_AudioChannelLayout_audio_channel_mask_t: no legacy output audio_channel_mask_t found for AudioChannelLayout{layoutMask: 16}
+resetDrmState:  mDrmInfo=null mDrmProvisioningThread=null mPrepareDrmInProgress=false mActiveDrmScheme=false
+cleanDrmObj: mDrmObj=null mDrmSessionId=null
+resetDrmState:  mDrmInfo=null mDrmProvisioningThread=null mPrepareDrmInProgress=false mActiveDrmScheme=false
+cleanDrmObj: mDrmObj=null mDrmSessionId=null
+Background concurrent copying GC freed 23MB AllocSpace bytes, 0(0B) LOS objects, 78% free, 6585KB/30MB, paused 117us,39us total 101.136ms
+
